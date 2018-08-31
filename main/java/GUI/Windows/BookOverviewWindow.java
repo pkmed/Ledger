@@ -23,6 +23,10 @@ public class BookOverviewWindow extends JFrame {
     private BookOverviewController controller = new BookOverviewController();
 
     public BookOverviewWindow(String openedBookName){
+        tableModel.addColumn("Entry");
+        tableModel.addColumn("Amount");
+        tableModel.addColumn("Date");
+
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);
         GridBagLayout gbLay = new GridBagLayout();
@@ -32,7 +36,7 @@ public class BookOverviewWindow extends JFrame {
         removeEntry.addActionListener(controller);
         editEntry.addActionListener(controller);
         backToList.addActionListener(controller);
-        setName(openedBookName);
+        entriesTable.addMouseListener(controller);
 
         gbConstr.insets.set(4,4,4,4);
 
@@ -43,7 +47,7 @@ public class BookOverviewWindow extends JFrame {
         gbConstr.gridheight = 10;
         gbConstr.weightx = 0.85;
         gbConstr.weighty = 1;
-        add(new JScrollPane(entriesList), gbConstr);
+        add(new JScrollPane(entriesTable), gbConstr);
 
         gbConstr.fill = GridBagConstraints.CENTER;
         gbConstr.gridx = 5;
@@ -73,12 +77,20 @@ public class BookOverviewWindow extends JFrame {
     }
 
     public void refreshEntries(String[] entries) {
-        listModel.clear();
+        //listModel.clear();
+        while(tableModel.getRowCount()>0){
+            tableModel.removeRow(0);
+        }
         for(String entry:entries){
-            listModel.addElement(entry);
+            //listModel.addElement(entry);
+            tableModel.addRow(entry.split(";"));
         }
     }
     public String getSelectedEntry(){
-        return entriesList.getSelectedValue();
+        String row="";
+        for(int i = 0; i<tableModel.getColumnCount(); i++){
+            row+=tableModel.getValueAt(entriesTable.getSelectedRow(), i)+";";
+        }
+        return row;
     }
 }

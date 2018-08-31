@@ -42,7 +42,9 @@ public class BookOverviewController implements ActionListener, MouseListener {
     }
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        if(e.getClickCount()==2){
+            BookOverviewLogic.editEntry(entryForm.getValues());
+        }
     }
     @Override
     public void mousePressed(MouseEvent e) {

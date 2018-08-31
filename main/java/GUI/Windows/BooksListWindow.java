@@ -4,6 +4,7 @@ import GUI.Constants.BooksListCommands;
 import GUI.Controllers.BooksListController;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class BooksListWindow extends JFrame {
@@ -11,6 +12,10 @@ public class BooksListWindow extends JFrame {
     //TODO: remake getSelectedEntry
     private DefaultListModel<String> listModel = new DefaultListModel<>();
     private JList<String> booksList = new JList<>(listModel);
+
+    private DefaultTableModel tableModel = new DefaultTableModel();
+    private JTable booksTable = new JTable(tableModel);
+
     private JButton addBook = new JButton(BooksListCommands.BTN_FUNC_ADD_BOOK),
             deleteBook = new JButton(BooksListCommands.BTN_FUNC_DELETE_BOOK),
             exportBook = new JButton(BooksListCommands.BTN_FUNC_EXPORT_BOOK),
@@ -18,6 +23,9 @@ public class BooksListWindow extends JFrame {
     private BooksListController controller = new BooksListController();
 
     public BooksListWindow(){
+        tableModel.addColumn("Book name");
+        tableModel.addColumn("Type");
+
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);
         GridBagLayout gbLay = new GridBagLayout();
@@ -27,6 +35,8 @@ public class BooksListWindow extends JFrame {
         deleteBook.addActionListener(controller);
         exportBook.addActionListener(controller);
         editBook.addActionListener(controller);
+        booksTable.addMouseListener(controller);
+        
 
         gbConstr.insets.set(4,4,4,4);
 
@@ -37,7 +47,7 @@ public class BooksListWindow extends JFrame {
         gbConstr.gridheight = 10;
         gbConstr.weightx = 0.85;
         gbConstr.weighty = 1;
-        add(booksList, gbConstr);
+        add(new JScrollPane(booksTable), gbConstr);
 
         gbConstr.fill = GridBagConstraints.CENTER;
         gbConstr.gridx = 5;
@@ -67,12 +77,16 @@ public class BooksListWindow extends JFrame {
     }
 
     public void refreshList(String[] books) {
-        listModel.clear();
+        //listModel.clear();
+        while(tableModel.getRowCount()>0){
+            tableModel.removeRow(0);
+        }
         for(String book:books){
-            listModel.addElement(book);
+            //listModel.addElement(book);
+            tableModel.addRow(book.split(";"));
         }
     }
     public String getSelectedBook(){
-        return booksList.getSelectedValue();
+        return tableModel.getValueAt(booksTable.getSelectedRow(), 0).toString();
     }
 }
