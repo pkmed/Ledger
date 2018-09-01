@@ -9,9 +9,6 @@ import java.awt.*;
 
 public class BooksListWindow extends JFrame {
     //TODO: implement own table model
-    //TODO: remake getSelectedEntry
-    private DefaultListModel<String> listModel = new DefaultListModel<>();
-    private JList<String> booksList = new JList<>(listModel);
 
     private DefaultTableModel tableModel = new DefaultTableModel();
     private JTable booksTable = new JTable(tableModel);
@@ -24,8 +21,7 @@ public class BooksListWindow extends JFrame {
 
     public BooksListWindow(){
         tableModel.addColumn("Book name");
-        tableModel.addColumn("Type");
-
+        tableModel.addColumn("Book type");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);
         GridBagLayout gbLay = new GridBagLayout();
@@ -36,7 +32,6 @@ public class BooksListWindow extends JFrame {
         exportBook.addActionListener(controller);
         editBook.addActionListener(controller);
         booksTable.addMouseListener(controller);
-        
 
         gbConstr.insets.set(4,4,4,4);
 
@@ -77,12 +72,10 @@ public class BooksListWindow extends JFrame {
     }
 
     public void refreshList(String[] books) {
-        //listModel.clear();
         while(tableModel.getRowCount()>0){
             tableModel.removeRow(0);
         }
         for(String book:books){
-            //listModel.addElement(book);
             tableModel.addRow(book.split(";"));
         }
     }

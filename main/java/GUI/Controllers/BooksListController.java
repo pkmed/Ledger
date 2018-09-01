@@ -27,9 +27,6 @@ public class BooksListController implements ActionListener, MouseListener {
         }
     }
     public void mouseClicked(MouseEvent e) {
-        if(e.getClickCount()==2){
-            SimpleLogic.openBook();
-        }
     }
     public void mousePressed(MouseEvent e) {
     }

@@ -9,9 +9,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class BookOverviewWindow extends JFrame {
-    private DefaultListModel<String> listModel = new DefaultListModel<>();
-    private JList<String> entriesList = new JList<>(listModel);
-
     //TODO: remake getSelectedEntry
     private DefaultTableModel tableModel = new DefaultTableModel();
     private JTable entriesTable = new JTable(tableModel);
@@ -26,7 +23,6 @@ public class BookOverviewWindow extends JFrame {
         tableModel.addColumn("Entry");
         tableModel.addColumn("Amount");
         tableModel.addColumn("Date");
-
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);
         GridBagLayout gbLay = new GridBagLayout();
@@ -77,12 +73,10 @@ public class BookOverviewWindow extends JFrame {
     }
 
     public void refreshEntries(String[] entries) {
-        //listModel.clear();
         while(tableModel.getRowCount()>0){
             tableModel.removeRow(0);
         }
         for(String entry:entries){
-            //listModel.addElement(entry);
             tableModel.addRow(entry.split(";"));
         }
     }
