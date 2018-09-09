@@ -9,7 +9,6 @@ import java.awt.*;
 
 public class BooksListWindow extends JFrame {
     //TODO: implement own table model
-
     private DefaultTableModel tableModel = new DefaultTableModel();
     private JTable booksTable = new JTable(tableModel);
 

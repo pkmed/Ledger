@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class SimpleLogic {
+public class BookListLogic {
     private static BooksListWindow booksListWindow;
     public static void main(String[] args){
         setUpDBConnection();
@@ -78,5 +78,9 @@ public class SimpleLogic {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void exportBook(String bookName, String exportType){
+
     }
 }

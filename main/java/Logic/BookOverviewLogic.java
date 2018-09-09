@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class BookOverviewLogic {
     private static String openedBookName;
     private static BookOverviewWindow bookOverviewWindow;
-    public static void showWindow(String[] entries){
+    static void showWindow(String[] entries){
         bookOverviewWindow = new BookOverviewWindow(openedBookName);
         bookOverviewWindow.refreshEntries(entries);
     }
@@ -74,6 +74,6 @@ public class BookOverviewLogic {
 
     public static void backToList(){
         bookOverviewWindow.dispose();
-        SimpleLogic.showWindow();
+        BookListLogic.showWindow();
     }
 }

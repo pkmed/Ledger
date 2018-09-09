@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class BookOverviewWindow extends JFrame {
-    //TODO: remake getSelectedEntry
+    //TODO: edit date cell width
     private DefaultTableModel tableModel = new DefaultTableModel();
     private JTable entriesTable = new JTable(tableModel);
 
