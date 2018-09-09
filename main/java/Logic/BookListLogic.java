@@ -2,17 +2,23 @@ package Logic;
 
 import GUI.Windows.BooksListWindow;
 import com.opencsv.CSVWriter;
-import com.opencsv.bean.OpencsvUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import wrap.JDBC_mysql_connector;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class BookListLogic {
+    private static final int COL_NUMBER = 3;
+
     private static BooksListWindow booksListWindow;
     public static void main(String[] args){
         setUpDBConnection();
@@ -95,12 +101,54 @@ public class BookListLogic {
     public static void exportBook(String bookName, String exportType, String saveTo){
         switch(exportType){
             case ".xls":
+                exportToXls(bookName, saveTo);
                 break;
             case ".xlsx":
+                exportToXlsx(bookName, saveTo);
                 break;
             case ".csv":
                 exportToCsv(bookName, saveTo);
                 break;
+        }
+    }
+
+    private static void exportToXls(String bookName, String saveTo) {
+        Workbook book = new HSSFWorkbook();
+        Sheet sheet = book.createSheet(bookName);
+        String[] entries = getBookEntries(bookName);
+        for(int r = 0; r<entries.length;r++){
+            Row row = sheet.createRow(r);
+            for (int c = 0; c < COL_NUMBER; c++) {
+                Cell cell = row.createCell(c);
+                cell.setCellValue(entries[r].split(";")[c]);
+                sheet.autoSizeColumn(c);
+            }
+        }
+        try {
+            book.write(new FileOutputStream(saveTo+"/"+bookName+".xls"));
+            book.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void exportToXlsx(String bookName, String saveTo) {
+        XSSFWorkbook book = new XSSFWorkbook();
+        XSSFSheet sheet = book.createSheet(bookName);
+        String[] entries = getBookEntries(bookName);
+        for (int r=0;r < entries.length; r++ ) {
+            XSSFRow row = sheet.createRow(r);
+            for (int c=0;c < COL_NUMBER; c++ ) {
+                XSSFCell cell = row.createCell(c);
+                cell.setCellValue(entries[r].split(";")[c]);
+                sheet.autoSizeColumn(c);
+            }
+        }
+        try {
+            book.write(new FileOutputStream(saveTo+"/"+bookName+".xlsx"));
+            book.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -112,11 +160,6 @@ public class BookListLogic {
             for(String s : entries)
                 csvWriter.writeNext(s.split(";"));
             csvWriter.close();
-            /*
-            for(String s: entries){
-                writer.append(s+"\n");
-            }
-            * */
         } catch (Exception e) {
             e.printStackTrace();
         }
