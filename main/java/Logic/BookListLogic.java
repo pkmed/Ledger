@@ -116,21 +116,16 @@ public class BookListLogic {
         Workbook book = new HSSFWorkbook();
         Sheet sheet = book.createSheet(bookName);
         String[] entries = getBookEntries(bookName);
-        for(int r = 0; r < entries.length;r++){
-            if(r>0){
-                Row row = sheet.createRow(r);
-                for (int c = 0; c < COL_NUMBER; c++) {
-                    Cell cell = row.createCell(c);
-                    cell.setCellValue(entries[r].split(";")[c]);
-                    sheet.autoSizeColumn(c);
-                }
-            } else {
-                Row row = sheet.createRow(r);
-                for (int c = 0; c < COL_NUMBER; c++) {
-                    Cell cell = row.createCell(c);
+        for(int r = 0; r < entries.length+1;r++){
+            Row row = sheet.createRow(r);
+            for (int c = 0; c < COL_NUMBER; c++) {
+                Cell cell = row.createCell(c);
+                if(r>0) {
+                    cell.setCellValue(entries[r-1].split(";")[c]);
+                } else {
                     cell.setCellValue(INCOME_BOOK_HEADERS[c]);
-                    sheet.autoSizeColumn(c);
                 }
+                sheet.autoSizeColumn(c);
             }
         }
         try {
@@ -145,21 +140,16 @@ public class BookListLogic {
         XSSFWorkbook book = new XSSFWorkbook();
         XSSFSheet sheet = book.createSheet(bookName);
         String[] entries = getBookEntries(bookName);
-        for (int r=0;r < entries.length; r++ ) {
-            if(r>0){
-                XSSFRow row = sheet.createRow(r);
-                for (int c = 0; c < COL_NUMBER; c++) {
-                    XSSFCell cell = row.createCell(c);
-                    cell.setCellValue(entries[r].split(";")[c]);
-                    sheet.autoSizeColumn(c);
-                }
-            } else {
-                XSSFRow row = sheet.createRow(r);
-                for (int c = 0; c < COL_NUMBER; c++) {
-                    XSSFCell cell = row.createCell(c);
+        for (int r=0;r < entries.length+1; r++ ) {
+            XSSFRow row = sheet.createRow(r);
+            for (int c = 0; c < COL_NUMBER; c++) {
+                XSSFCell cell = row.createCell(c);
+                if(r>0) {
+                    cell.setCellValue(entries[r-1].split(";")[c]);
+                } else {
                     cell.setCellValue(INCOME_BOOK_HEADERS[c]);
-                    sheet.autoSizeColumn(c);
                 }
+                sheet.autoSizeColumn(c);
             }
         }
         try {
