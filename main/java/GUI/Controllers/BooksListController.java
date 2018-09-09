@@ -22,7 +22,7 @@ public class BooksListController implements ActionListener, MouseListener {
                 BookListLogic.openBook();
                 break;
             case BooksListCommands.BTN_FUNC_EXPORT_BOOK:
-                JOptionPane.showMessageDialog(null,"export check");
+                BookListLogic.exportBook("","");
                 break;
         }
     }
