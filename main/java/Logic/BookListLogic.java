@@ -14,7 +14,6 @@ import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class BookListLogic {
     private static final int COL_NUMBER = 3;
