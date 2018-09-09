@@ -1,8 +1,13 @@
 package Logic;
 
 import GUI.Windows.BooksListWindow;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.OpencsvUtils;
 import wrap.JDBC_mysql_connector;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,7 +41,9 @@ public class BookListLogic {
             return null;
         }
     }
-
+    public static String getSelectedBook(){
+        return booksListWindow.getSelectedBook();
+    }
     public static void addBook(String bookName) {
         try {
             JDBC_mysql_connector.execUpdate("INSERT INTO books (bookName, bookType) values ('"+bookName+"', 'income');");
@@ -65,22 +72,53 @@ public class BookListLogic {
     }
 
     public static void openBook() {
-        String bookName = booksListWindow.getSelectedBook().split(";")[0];
+        String bookName = booksListWindow.getSelectedBook();
+        booksListWindow.dispose();
+        BookOverviewLogic.setOpenedBookName(bookName);
+        BookOverviewLogic.showWindow(getBookEntries(bookName));
+    }
+
+    private static String[] getBookEntries(String bookName){
         ArrayList<String> entries = new ArrayList<>();
         try {
             ResultSet rs = JDBC_mysql_connector.execQuery("SELECT * FROM "+bookName+"_book");
             while (rs.next()){
                 entries.add(rs.getString(2)+";"+rs.getString(3)+";"+rs.getString(4));
             }
-            booksListWindow.dispose();
-            BookOverviewLogic.setOpenedBookName(bookName);
-            BookOverviewLogic.showWindow(entries.toArray(new String[entries.size()]));
+            return entries.toArray(new String[entries.size()]);
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
     }
 
-    public static void exportBook(String bookName, String exportType){
+    public static void exportBook(String bookName, String exportType, String saveTo){
+        switch(exportType){
+            case ".xls":
+                break;
+            case ".xlsx":
+                break;
+            case ".csv":
+                exportToCsv(bookName, saveTo);
+                break;
+        }
+    }
 
+    private static void exportToCsv(String bookName, String saveTo) {
+        try {
+            CSVWriter csvWriter = new CSVWriter(new FileWriter(saveTo+"/"+bookName+".csv", false),';',CSVWriter.NO_QUOTE_CHARACTER,CSVWriter.DEFAULT_ESCAPE_CHARACTER,CSVWriter.DEFAULT_LINE_END);
+            csvWriter.writeNext(new String[]{"Entry","Amount","Date"});
+            String[] entries = getBookEntries(bookName);
+            for(String s : entries)
+                csvWriter.writeNext(s.split(";"));
+            csvWriter.close();
+            /*
+            for(String s: entries){
+                writer.append(s+"\n");
+            }
+            * */
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

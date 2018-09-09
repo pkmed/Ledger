@@ -1,6 +1,7 @@
 package GUI.Controllers;
 
 import GUI.Constants.BooksListCommands;
+import GUI.Windows.ExportForm;
 import Logic.BookListLogic;
 
 import javax.swing.*;
@@ -10,6 +11,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class BooksListController implements ActionListener, MouseListener {
+    private ExportForm exportForm;
+
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()){
             case BooksListCommands.BTN_FUNC_ADD_BOOK:
@@ -22,7 +25,14 @@ public class BooksListController implements ActionListener, MouseListener {
                 BookListLogic.openBook();
                 break;
             case BooksListCommands.BTN_FUNC_EXPORT_BOOK:
-                BookListLogic.exportBook("","");
+                exportForm = new ExportForm(this,BooksListCommands.BTN_FUNC_EXPORT_FORM_EXPORT);
+                break;
+            case BooksListCommands.BTN_FUNC_EXPORT_FORM_DIR_CHOOSE:
+                exportForm.showDirChooser();
+                break;
+            case BooksListCommands.BTN_FUNC_EXPORT_FORM_EXPORT:
+                BookListLogic.exportBook(BookListLogic.getSelectedBook(), exportForm.getExportType(), exportForm.getSavePath());
+                exportForm.dispose();
                 break;
         }
     }
