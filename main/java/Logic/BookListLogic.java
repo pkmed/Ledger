@@ -109,6 +109,20 @@ public class BookListLogic {
             case ".csv":
                 exportToCsv(bookName, saveTo);
                 break;
+            case ".html":
+                exportToHtml(bookName, saveTo);
+                break;
+        }
+    }
+
+    private static void exportToHtml(String bookName, String saveTo) {
+        try {
+            HTMLExporter htmlExporter = new HTMLExporter(new FileWriter(saveTo+"/"+bookName+".html", false), bookName);
+            htmlExporter.setData(getBookEntries(bookName));
+            htmlExporter.writeData();
+            htmlExporter.closeHTMLExporter();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -163,7 +177,7 @@ public class BookListLogic {
     private static void exportToCsv(String bookName, String saveTo) {
         try {
             CSVWriter csvWriter = new CSVWriter(new FileWriter(saveTo+"/"+bookName+".csv", false),';',CSVWriter.NO_QUOTE_CHARACTER,CSVWriter.DEFAULT_ESCAPE_CHARACTER,CSVWriter.DEFAULT_LINE_END);
-            csvWriter.writeNext(new String[]{"Entry","Amount","Date"});
+            csvWriter.writeNext(INCOME_BOOK_HEADERS);
             String[] entries = getBookEntries(bookName);
             for(String s : entries)
                 csvWriter.writeNext(s.split(";"));

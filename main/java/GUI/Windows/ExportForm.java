@@ -10,7 +10,7 @@ public class ExportForm extends JFrame {
     private JLabel directoryLabel = new JLabel("Directory:"), typeLabel = new JLabel("Type:");
     private JTextField directoryField = new JTextField();
     private JFileChooser directoryChooser = new JFileChooser();
-    private JComboBox exportTypesChooser = new JComboBox(new String[]{".xls", ".xlsx", ".csv"});
+    private JComboBox exportTypesChooser = new JComboBox(new String[]{".xls", ".xlsx", ".csv", ".html"});
     private JButton exportBtn, dirChooseBtn = new JButton(BooksListCommands.BTN_FUNC_EXPORT_FORM_DIR_CHOOSE);
 
     public ExportForm(BooksListController booksListController, String btnFunc){

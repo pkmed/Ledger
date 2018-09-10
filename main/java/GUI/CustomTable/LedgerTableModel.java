@@ -5,7 +5,6 @@ import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 
 public class LedgerTableModel extends AbstractTableModel {
-    //TODO: copy methods from DefaultTableModel
     private String[] columnNames;
     private ArrayList<ArrayList<Object>> data = new ArrayList<>();
     private int currentRowNumber = 0;
