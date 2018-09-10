@@ -2,14 +2,13 @@ package GUI.Windows;
 
 import GUI.Constants.BooksListCommands;
 import GUI.Controllers.BooksListController;
+import GUI.CustomTable.LedgerTableModel;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class BooksListWindow extends JFrame {
-    //TODO: implement own table model
-    private DefaultTableModel tableModel = new DefaultTableModel();
+    private LedgerTableModel tableModel = new LedgerTableModel(new String[]{"Book name", "Book type"});
     private JTable booksTable = new JTable(tableModel);
 
     private JButton addBook = new JButton(BooksListCommands.BTN_FUNC_ADD_BOOK),
@@ -19,8 +18,6 @@ public class BooksListWindow extends JFrame {
     private BooksListController controller = new BooksListController();
 
     public BooksListWindow(){
-        tableModel.addColumn("Book name");
-        tableModel.addColumn("Book type");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);
         GridBagLayout gbLay = new GridBagLayout();
@@ -67,7 +64,7 @@ public class BooksListWindow extends JFrame {
         add(new JPanel(), gbConstr);
 
         setVisible(true);
-        setResizable(false);
+        setResizable(true);
     }
 
     public void refreshList(String[] books) {

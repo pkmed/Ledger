@@ -2,6 +2,8 @@ package GUI.Windows;
 
 import GUI.Constants.BookOverviewCommands;
 import GUI.Controllers.BookOverviewController;
+import GUI.CustomTable.LedgerCellEditor;
+import GUI.CustomTable.LedgerTableModel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,9 +11,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class BookOverviewWindow extends JFrame {
-    //TODO: edit date cell width
-    private DefaultTableModel tableModel = new DefaultTableModel();
-    private JTable entriesTable = new JTable(tableModel);
+    private LedgerTableModel ledgerModel = new LedgerTableModel(new String[]{"Entry","Amount","Date"});
+    private JTable entriesTable = new JTable(ledgerModel);
 
     private JButton addEntry = new JButton(BookOverviewCommands.BTN_FUNC_ADD_ENTRY),
             removeEntry = new JButton(BookOverviewCommands.BTN_FUNC_REMOVE_ENTRY),
@@ -20,9 +21,8 @@ public class BookOverviewWindow extends JFrame {
     private BookOverviewController controller = new BookOverviewController();
 
     public BookOverviewWindow(String openedBookName){
-        tableModel.addColumn("Entry");
-        tableModel.addColumn("Amount");
-        tableModel.addColumn("Date");
+        entriesTable.getColumnModel().getColumn(0).setCellRenderer(new LedgerCellEditor());
+        entriesTable.getColumnModel().getColumn(2).setCellRenderer(new LedgerCellEditor());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);
         GridBagLayout gbLay = new GridBagLayout();
@@ -33,6 +33,7 @@ public class BookOverviewWindow extends JFrame {
         editEntry.addActionListener(controller);
         backToList.addActionListener(controller);
         entriesTable.addMouseListener(controller);
+        setName(openedBookName);
 
         gbConstr.insets.set(4,4,4,4);
 
@@ -69,21 +70,19 @@ public class BookOverviewWindow extends JFrame {
         add(new JPanel(), gbConstr);
 
         setVisible(true);
-        setResizable(false);
+        setResizable(true);
     }
 
     public void refreshEntries(String[] entries) {
-        while(tableModel.getRowCount()>0){
-            tableModel.removeRow(0);
-        }
+        ledgerModel.clearValues();
         for(String entry:entries){
-            tableModel.addRow(entry.split(";"));
+            ledgerModel.addRow(entry.split(";"));
         }
     }
     public String getSelectedEntry(){
         String row="";
-        for(int i = 0; i<tableModel.getColumnCount(); i++){
-            row+=tableModel.getValueAt(entriesTable.getSelectedRow(), i)+";";
+        for(int i = 0; i<ledgerModel.getColumnCount(); i++){
+            row+=ledgerModel.getValueAt(entriesTable.getSelectedRow(), i)+";";
         }
         return row;
     }

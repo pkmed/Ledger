@@ -1,77 +1,57 @@
 package GUI.CustomTable;
 
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import java.util.*;
+import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 
-public class LedgerTableModel implements TableModel {
-
-    private Set<TableModelListener> listeners = new HashSet<>();
-    private List<String> data;
-
-    public LedgerTableModel(List<String> data){
-        this.data = data;
+public class LedgerTableModel extends AbstractTableModel {
+    //TODO: copy methods from DefaultTableModel
+    private String[] columnNames;
+    private ArrayList<ArrayList<Object>> data = new ArrayList<>();
+    private int currentRowNumber = 0;
+    private int colCount;
+    private ArrayList<Object> singleRow;
+    public LedgerTableModel(String[] columns){
+        columnNames = columns;
+        colCount = columns.length;
     }
-
-    @Override
-    public void addTableModelListener(TableModelListener l) {
-        listeners.add(l);
+    public void addRow(String[] row){
+    singleRow = new ArrayList<>();
+    for (int i = 0; i < row.length; i++) {
+        setValueAt(row[i],currentRowNumber,i);
     }
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {
-        listeners.remove(l);
+    data.add(currentRowNumber, singleRow);
+    currentRowNumber++;
     }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return String.class;
+    public void removeRow(int i) {
+        data.remove(i);
+        currentRowNumber--;
     }
-
-    @Override
+    public void clearValues(){
+        data.clear();
+    }
     public int getColumnCount() {
-        return 2;
+        return colCount;
     }
 
-    @Override
     public int getRowCount() {
         return data.size();
     }
 
-    @Override
-    public String getColumnName(int columnIndex) {
-        switch (columnIndex){
-            case 0:
-                return "Book name";
-            case 1:
-                return "Type";
-        }
-        return "";
+    public String getColumnName(int col) {
+        return columnNames[col];
     }
 
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public Object getValueAt(int row, int col) {
+        return data.get(row).get(col);
+    }
+    public Class getColumnClass(int c) {
+        return getValueAt(0, c).getClass();
+    }
+    public boolean isCellEditable(int row, int col) {
         return false;
     }
-
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        try {
-            String row = data.get(rowIndex);
-            switch (columnIndex) {
-                case 0:
-                    return row.split(";")[0];
-                case 1:
-                    return row.split(";")[1];
-            }
-            return "";
-        } catch(ArrayIndexOutOfBoundsException exc){
-            return "";
-        }
-    }
-
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
+    public void setValueAt(Object value, int row, int col) {
+        singleRow.add(col,value);
+        fireTableCellUpdated(row, col);
     }
 }
