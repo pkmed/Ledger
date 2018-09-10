@@ -6,7 +6,6 @@ import GUI.CustomTable.LedgerCellEditor;
 import GUI.CustomTable.LedgerTableModel;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
 

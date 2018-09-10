@@ -4,6 +4,7 @@ import GUI.Constants.BookOverviewCommands;
 import GUI.Windows.EntryCreateForm;
 import Logic.BookOverviewLogic;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -43,7 +44,8 @@ public class BookOverviewController implements ActionListener, MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         if(e.getClickCount()==2){
-            BookOverviewLogic.editEntry(entryForm.getValues());
+            actionPerformed(new ActionEvent(new JPanel(),0,BookOverviewCommands.BTN_FUNC_EDIT_ENTRY));
+        } else if(e.getClickCount()==1){
         }
     }
     @Override

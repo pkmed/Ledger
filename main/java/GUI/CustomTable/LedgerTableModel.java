@@ -1,5 +1,6 @@
 package GUI.CustomTable;
 
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 
@@ -15,12 +16,16 @@ public class LedgerTableModel extends AbstractTableModel {
         colCount = columns.length;
     }
     public void addRow(String[] row){
-    singleRow = new ArrayList<>();
-    for (int i = 0; i < row.length; i++) {
-        setValueAt(row[i],currentRowNumber,i);
+        singleRow = new ArrayList<>();
+        for (int i = 0; i < row.length; i++) {
+            setValueAt(row[i],currentRowNumber,i);
+        }
+        data.add(currentRowNumber, singleRow);
+        newRowsAdded(new TableModelEvent(this,currentRowNumber,currentRowNumber,-1,TableModelEvent.INSERT));
+        currentRowNumber++;
     }
-    data.add(currentRowNumber, singleRow);
-    currentRowNumber++;
+    private void newRowsAdded(TableModelEvent event){
+        fireTableChanged(event);
     }
     public void removeRow(int i) {
         data.remove(i);
@@ -28,6 +33,7 @@ public class LedgerTableModel extends AbstractTableModel {
     }
     public void clearValues(){
         data.clear();
+        currentRowNumber=0;
     }
     public int getColumnCount() {
         return colCount;

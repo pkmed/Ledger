@@ -37,6 +37,9 @@ public class BooksListController implements ActionListener, MouseListener {
         }
     }
     public void mouseClicked(MouseEvent e) {
+        if(e.getClickCount()==2){
+            actionPerformed(new ActionEvent(new JPanel(),0,BooksListCommands.BTN_FUNC_OPEN_BOOK));
+        }
     }
     public void mousePressed(MouseEvent e) {
     }
