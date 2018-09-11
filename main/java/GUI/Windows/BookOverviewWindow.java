@@ -21,6 +21,7 @@ public class BookOverviewWindow extends JFrame {
 
     public BookOverviewWindow(String openedBookName){
         entriesTable.getColumnModel().getColumn(0).setCellRenderer(new LedgerCellRenderer());
+        entriesTable.getColumnModel().getColumn(1).setCellRenderer(new LedgerCellRenderer());
         entriesTable.getColumnModel().getColumn(2).setCellRenderer(new LedgerCellRenderer());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);

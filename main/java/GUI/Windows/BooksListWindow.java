@@ -2,6 +2,7 @@ package GUI.Windows;
 
 import GUI.Constants.BooksListCommands;
 import GUI.Controllers.BooksListController;
+import GUI.CustomTable.LedgerCellRenderer;
 import GUI.CustomTable.LedgerTableModel;
 
 import javax.swing.*;
@@ -18,6 +19,8 @@ public class BooksListWindow extends JFrame {
     private BooksListController controller = new BooksListController();
 
     public BooksListWindow(){
+        booksTable.getColumnModel().getColumn(0).setCellRenderer(new LedgerCellRenderer());
+        booksTable.getColumnModel().getColumn(1).setCellRenderer(new LedgerCellRenderer());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);
         GridBagLayout gbLay = new GridBagLayout();
