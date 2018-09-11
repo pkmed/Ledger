@@ -2,17 +2,24 @@ package GUI.CustomTable;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.util.ArrayList;
 
 public class LedgerTableModel extends AbstractTableModel {
-    private String[] columnNames;
+    private TableColumnModel columnModel = new DefaultTableColumnModel();
     private ArrayList<ArrayList<Object>> data = new ArrayList<>();
     private int currentRowNumber = 0;
-    private int colCount;
+    private int colCount=0;
     private ArrayList<Object> singleRow;
     public LedgerTableModel(String[] columns){
-        columnNames = columns;
-        colCount = columns.length;
+        for(int i=0;i<columns.length;i++){
+            columnModel.addColumn(new TableColumn(i));
+            columnModel.getColumn(i).setHeaderValue(columns[i]);
+            columnModel.getColumn(i).addPropertyChangeListener(new TableColumnPropertyChangeHandler());
+            colCount++;
+        }
     }
     public void addRow(String[] row){
         singleRow = new ArrayList<>();
@@ -23,6 +30,13 @@ public class LedgerTableModel extends AbstractTableModel {
         newRowsAdded(new TableModelEvent(this,currentRowNumber,currentRowNumber,-1,TableModelEvent.INSERT));
         currentRowNumber++;
     }
+    /*public void addColumn(String colName){
+        columnModel.addColumn(new TableColumn(colCount));
+        columnModel.getColumn(colCount).setHeaderValue(colName);
+        columnModel.getColumn(colCount).addPropertyChangeListener(new TableColumnPropertyChangeHandler());
+        fireTableChanged(new TableModelEvent(this,0,currentRowNumber,colCount,TableModelEvent.UPDATE));
+        colCount++;
+    }*/
     private void newRowsAdded(TableModelEvent event){
         fireTableChanged(event);
     }
@@ -43,7 +57,7 @@ public class LedgerTableModel extends AbstractTableModel {
     }
 
     public String getColumnName(int col) {
-        return columnNames[col];
+        return (String)columnModel.getColumn(col).getHeaderValue();
     }
 
     public Object getValueAt(int row, int col) {
