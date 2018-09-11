@@ -19,16 +19,19 @@ class HTMLExporter {
         String tableData="";
         for(String s:data){
             tableData+="<tr>\n" +
-            "               <td>"+s.split(";")[0]+"</td>\n" +
-            "               <td>"+s.split(";")[1]+"</td>\n" +
-            "               <td>"+s.split(";")[2]+"</td>\n" +
+            "               <td style=\"border:1px solid black;\">"+s.split(";")[0]+"</td>\n" +
+            "               <td style=\"border:1px solid black;\">"+s.split(";")[1]+"</td>\n" +
+            "               <td style=\"border:1px solid black;\">"+s.split(";")[2]+"</td>\n" +
             "           </tr>\n";
         }
-        outHTMLCode+="<!DOCTYPE html>" +
+        outHTMLCode+="<!DOCTYPE html>\n" +
                      "<html>\n" +
-                     "    <head><p>"+bookName+"</p></head>\n" +
+                     "    <head><title>"+bookName+"</title></head>\n" +
                      "    <body>\n" +
-                     "        <table style=\"border:1px solid black;\">\n" +
+                     "        <table style=\"border-collapse: collapse;\">\n" +
+                     "           <th style=\"border:1px solid black;\">Entry</th>"+
+                     "           <th style=\"border:1px solid black;\">Amount</th>"+
+                     "           <th style=\"border:1px solid black;\">Data</th>"+
                                  tableData +
                      "        </table>\n" +
                      "    </body>\n" +

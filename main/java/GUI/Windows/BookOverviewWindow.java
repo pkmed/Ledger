@@ -2,7 +2,7 @@ package GUI.Windows;
 
 import GUI.Constants.BookOverviewCommands;
 import GUI.Controllers.BookOverviewController;
-import GUI.CustomTable.LedgerCellEditor;
+import GUI.CustomTable.LedgerCellRenderer;
 import GUI.CustomTable.LedgerTableModel;
 
 import javax.swing.*;
@@ -20,8 +20,8 @@ public class BookOverviewWindow extends JFrame {
     private BookOverviewController controller = new BookOverviewController();
 
     public BookOverviewWindow(String openedBookName){
-        entriesTable.getColumnModel().getColumn(0).setCellRenderer(new LedgerCellEditor());
-        entriesTable.getColumnModel().getColumn(2).setCellRenderer(new LedgerCellEditor());
+        entriesTable.getColumnModel().getColumn(0).setCellRenderer(new LedgerCellRenderer());
+        entriesTable.getColumnModel().getColumn(2).setCellRenderer(new LedgerCellRenderer());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);
         GridBagLayout gbLay = new GridBagLayout();

@@ -30,7 +30,7 @@ public class BookListLogic {
     }
     private static void setUpDBConnection(){
         JDBC_mysql_connector.importJDBC();
-        //TODO: implement creating other users and login for they
+        //TODO: implement creating other users and login
         JDBC_mysql_connector.establishConnection("localhost:3306", "ledger", "root", "666partywiththedevilbitch");
     }
 
