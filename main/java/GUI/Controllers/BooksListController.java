@@ -16,7 +16,12 @@ public class BooksListController implements ActionListener, MouseListener {
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()){
             case BooksListCommands.BTN_FUNC_ADD_BOOK:
-                BookListLogic.addBook(JOptionPane.showInputDialog("Type book name"));
+                String bookName = JOptionPane.showInputDialog("Type book name");
+                if(bookName.equals("")){
+                    JOptionPane.showMessageDialog(null,"Empty name");
+                } else {
+                    BookListLogic.addBook(bookName);
+                }
                 break;
             case BooksListCommands.BTN_FUNC_DELETE_BOOK:
                 BookListLogic.deleteBook();
