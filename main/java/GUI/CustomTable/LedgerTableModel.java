@@ -1,10 +1,7 @@
 package GUI.CustomTable;
 
 import javax.swing.event.TableModelEvent;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 import java.util.ArrayList;
 
 public class LedgerTableModel extends AbstractTableModel {
@@ -23,8 +20,15 @@ public class LedgerTableModel extends AbstractTableModel {
     }
     public void addRow(String[] row){
         singleRow = new ArrayList<>();
-        for (int i = 0; i < row.length; i++) {
-            setValueAt(row[i],currentRowNumber,i);
+        int i;
+        for (i = 0; i < row.length; i++) {
+            setValueAt(row[i], currentRowNumber, i);
+        }
+        if(row.length<colCount){
+            while(i<colCount) {
+                setValueAt("", currentRowNumber, i);
+                i++;
+            }
         }
         data.add(currentRowNumber, singleRow);
         newRowsAdded(new TableModelEvent(this,currentRowNumber,currentRowNumber,-1,TableModelEvent.INSERT));

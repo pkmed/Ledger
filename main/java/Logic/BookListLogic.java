@@ -1,6 +1,8 @@
 package Logic;
 
 import GUI.Windows.BooksListWindow;
+import Logic.FileInteraction.DataReader;
+import Logic.InfoModels.IncomeBook;
 import com.opencsv.CSVWriter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -18,19 +20,27 @@ import java.util.ArrayList;
 public class BookListLogic {
     private static final int COL_NUMBER = 3;
     private static final String[] INCOME_BOOK_HEADERS = {"Entry","Amount","Date"};
+    private static ArrayList<IncomeBook> books = new ArrayList<>();
 
     private static BooksListWindow booksListWindow;
     public static void main(String[] args){
-        setUpDBConnection();
-        showWindow();
+        File files = new File("D:\\Java\\IdeaProjects\\Desktop\\ledger\\src\\main\\resources\\books\\");
+        try {
+            books = new DataReader().loadBooks(files.getPath(),files.list());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        //new DataReader().loadBooks(new FileReader("D:\\Java\\IdeaProjects\\Desktop\\ledger\\src\\main\\resources\\test.json"));
+        //setUpDBConnection();
+        //showWindow();
     }
     static void showWindow(){
         booksListWindow = new BooksListWindow();
-        booksListWindow.refreshList(getBooks());
+        //booksListWindow.refreshList(getBooks());
     }
+    //TODO: replace mysql-db with own way to save data in files
     private static void setUpDBConnection(){
         JDBC_mysql_connector.importJDBC();
-        //TODO: implement creating other users and login
         JDBC_mysql_connector.establishConnection("localhost:3306", "ledger", "root", "666partywiththedevilbitch");
     }
 
