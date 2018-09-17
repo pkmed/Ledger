@@ -2,7 +2,9 @@ package Logic;
 
 import GUI.Windows.BooksListWindow;
 import Logic.FileInteraction.DataReader;
+import Logic.FileInteraction.DataWriter;
 import Logic.InfoModels.IncomeBook;
+import Logic.InfoModels.IncomeEntry;
 import com.opencsv.CSVWriter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -10,81 +12,56 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import wrap.JDBC_mysql_connector;
 
 import java.io.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BookListLogic {
     private static final int COL_NUMBER = 3;
     private static final String[] INCOME_BOOK_HEADERS = {"Entry","Amount","Date"};
-    private static ArrayList<IncomeBook> books = new ArrayList<>();
+    private static HashMap<String, IncomeBook> books = new HashMap<>();
+    private static String workDir = "D:\\Java\\IdeaProjects\\Desktop\\ledger\\src\\main\\resources\\books\\";
 
     private static BooksListWindow booksListWindow;
     public static void main(String[] args){
-        File files = new File("D:\\Java\\IdeaProjects\\Desktop\\ledger\\src\\main\\resources\\books\\");
-        try {
-            books = new DataReader().loadBooks(files.getPath(),files.list());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        //new DataReader().loadBooks(new FileReader("D:\\Java\\IdeaProjects\\Desktop\\ledger\\src\\main\\resources\\test.json"));
-        //setUpDBConnection();
-        //showWindow();
+        File files = new File(workDir);
+        books = new DataReader().loadBooks(files.getPath(),files.list());
+        showWindow();
     }
     static void showWindow(){
         booksListWindow = new BooksListWindow();
-        //booksListWindow.refreshList(getBooks());
+        booksListWindow.refreshList(getBooks());
     }
-    //TODO: replace mysql-db with own way to save data in files
-    private static void setUpDBConnection(){
-        JDBC_mysql_connector.importJDBC();
-        JDBC_mysql_connector.establishConnection("localhost:3306", "ledger", "root", "666partywiththedevilbitch");
-    }
-
     private static String[] getBooks() {
-        try {
-            ArrayList<String> books = new ArrayList<>();
-            ResultSet rs = JDBC_mysql_connector.execQuery("SELECT * FROM books");
-            while(rs.next()){
-                books.add(rs.getString(2)+";"+rs.getString(3));
-            }
-            return books.toArray(new String[books.size()]);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        String booksNames[] = books.keySet().toArray(new String[books.size()]);
+        //TODO: move book type to object
+        for (int i = 0; i < booksNames.length; i++) {
+            booksNames[i] +=";income";
         }
+        return booksNames;
+    }
+    public static void saveBooks(){
+        new DataWriter().saveBooks(books,workDir);
+    }
+    static IncomeBook getBook(String bookName){
+        return books.get(bookName);
     }
     public static String getSelectedBook(){
         return booksListWindow.getSelectedBook();
     }
     public static void addBook(String bookName) {
-        try {
-            JDBC_mysql_connector.execUpdate("INSERT INTO books (bookName, bookType) values ('"+bookName+"', 'income');");
-            JDBC_mysql_connector.execUpdate("CREATE TABLE `ledger`.`"+bookName+"_book` (\n" +
-                    "  `id` INT NOT NULL AUTO_INCREMENT,\n" +
-                    "  `entry` VARCHAR(45) NOT NULL,\n" +
-                    "  `amount` INT(15) NOT NULL,\n" +
-                    "  `entry_date` DATETIME NOT NULL,\n" +
-                    "  PRIMARY KEY (`id`))"+
-                    "DEFAULT CHARACTER SET = utf8;");
-
-            booksListWindow.refreshList(getBooks());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        IncomeBook book = new IncomeBook();
+        book.setBookName(bookName);
+        books.put(bookName, book);
+        saveBooks();
+        booksListWindow.refreshList(getBooks());
     }
     public static void deleteBook(){
         String bookName = booksListWindow.getSelectedBook().split(";")[0];
-        try {
-            JDBC_mysql_connector.execUpdate("DELETE FROM books WHERE bookName='"+bookName+"'");
-            JDBC_mysql_connector.execUpdate("DROP TABLE "+bookName+"_book");
-            booksListWindow.refreshList(getBooks());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        File del = new File(workDir + bookName + ".json");
+        del.delete();
+        books.remove(bookName);
+        booksListWindow.refreshList(getBooks());
     }
 
     public static void openBook() {
@@ -94,18 +71,14 @@ public class BookListLogic {
         BookOverviewLogic.showWindow(getBookEntries(bookName));
     }
 
-    private static String[] getBookEntries(String bookName){
-        ArrayList<String> entries = new ArrayList<>();
-        try {
-            ResultSet rs = JDBC_mysql_connector.execQuery("SELECT * FROM "+bookName+"_book");
-            while (rs.next()){
-                entries.add(rs.getString(2)+";"+rs.getString(3)+";"+rs.getString(4));
-            }
-            return entries.toArray(new String[entries.size()]);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+    static String[] getBookEntries(String bookName){
+        IncomeEntry[] entries = books.get(bookName).getEntries();
+        String[] returnableEntries = new String[entries.length];
+        for(int i=0;i<entries.length; i++){
+            //TODO: adapt view of entries to work with fields instead of strings
+            returnableEntries[i] = entries[i].getLabel()+";"+entries[i].getAmount()+";"+entries[i].getDate();
         }
+        return returnableEntries;
     }
 
     public static void exportBook(String bookName, String exportType, String saveTo){
@@ -153,8 +126,10 @@ public class BookListLogic {
             }
         }
         try {
-            book.write(new FileOutputStream(saveTo+"/"+bookName+".xls"));
+            FileOutputStream fOut = new FileOutputStream(saveTo+"/"+bookName+".xls");
+            book.write(fOut);
             book.close();
+            fOut.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -177,8 +152,10 @@ public class BookListLogic {
             }
         }
         try {
-            book.write(new FileOutputStream(saveTo+"/"+bookName+".xlsx"));
+            FileOutputStream fOut = new FileOutputStream(saveTo+"/"+bookName+".xlsx");
+            book.write(fOut);
             book.close();
+            fOut.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -186,12 +163,14 @@ public class BookListLogic {
 
     private static void exportToCsv(String bookName, String saveTo) {
         try {
-            CSVWriter csvWriter = new CSVWriter(new FileWriter(saveTo+"/"+bookName+".csv", false),';',CSVWriter.NO_QUOTE_CHARACTER,CSVWriter.DEFAULT_ESCAPE_CHARACTER,CSVWriter.DEFAULT_LINE_END);
+            FileWriter fWriter = new FileWriter(saveTo+"/"+bookName+".csv", false);
+            CSVWriter csvWriter = new CSVWriter(fWriter,';',CSVWriter.NO_QUOTE_CHARACTER,CSVWriter.DEFAULT_ESCAPE_CHARACTER,CSVWriter.DEFAULT_LINE_END);
             csvWriter.writeNext(INCOME_BOOK_HEADERS);
             String[] entries = getBookEntries(bookName);
             for(String s : entries)
                 csvWriter.writeNext(s.split(";"));
             csvWriter.close();
+            fWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

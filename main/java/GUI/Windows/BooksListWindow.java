@@ -31,6 +31,7 @@ public class BooksListWindow extends JFrame {
         exportBook.addActionListener(controller);
         editBook.addActionListener(controller);
         booksTable.addMouseListener(controller);
+        this.addWindowListener(controller);
 
         gbConstr.insets.set(4,4,4,4);
 

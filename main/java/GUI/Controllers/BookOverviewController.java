@@ -2,15 +2,13 @@ package GUI.Controllers;
 
 import GUI.Constants.BookOverviewCommands;
 import GUI.Windows.EntryCreateForm;
+import Logic.BookListLogic;
 import Logic.BookOverviewLogic;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
-public class BookOverviewController implements ActionListener, MouseListener {
+public class BookOverviewController implements ActionListener, MouseListener,WindowListener {
 
     private EntryCreateForm entryForm;
 
@@ -62,6 +60,34 @@ public class BookOverviewController implements ActionListener, MouseListener {
     }
     @Override
     public void mouseExited(MouseEvent e) {
+
+    }
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+    @Override
+    public void windowClosing(WindowEvent e) {
+        BookListLogic.saveBooks();
+    }
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+    @Override
+    public void windowDeactivated(WindowEvent e) {
 
     }
 }

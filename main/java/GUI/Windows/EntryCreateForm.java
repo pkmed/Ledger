@@ -4,6 +4,8 @@ import GUI.Controllers.BookOverviewController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class EntryCreateForm extends JFrame {
     private JLabel entryLabel = new JLabel("Entry:"), amountLabel = new JLabel("Amount:");
@@ -77,7 +79,9 @@ public class EntryCreateForm extends JFrame {
         String[] values = new String[3];
         values[0] = entryField.getText();
         values[1] = amountField.getText();
-        values[2] = java.time.LocalDateTime.now().toString();
+        Date date = new Date();
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        values[2] = formatForDateNow.format(date);
         return values;
     }
 

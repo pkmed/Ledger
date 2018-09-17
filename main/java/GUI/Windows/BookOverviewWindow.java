@@ -33,6 +33,7 @@ public class BookOverviewWindow extends JFrame {
         editEntry.addActionListener(controller);
         backToList.addActionListener(controller);
         entriesTable.addMouseListener(controller);
+        this.addWindowListener(controller);
         setName(openedBookName);
 
         gbConstr.insets.set(4,4,4,4);
@@ -85,5 +86,8 @@ public class BookOverviewWindow extends JFrame {
             row+=ledgerModel.getValueAt(entriesTable.getSelectedRow(), i)+";";
         }
         return row;
+    }
+    public int getSelectedEntryId(){
+        return entriesTable.getSelectedRow();
     }
 }

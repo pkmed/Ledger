@@ -5,12 +5,9 @@ import GUI.Windows.ExportForm;
 import Logic.BookListLogic;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
-public class BooksListController implements ActionListener, MouseListener {
+public class BooksListController implements ActionListener, MouseListener, WindowListener {
     private ExportForm exportForm;
 
     public void actionPerformed(ActionEvent e) {
@@ -53,5 +50,33 @@ public class BooksListController implements ActionListener, MouseListener {
     public void mouseEntered(MouseEvent e) {
     }
     public void mouseExited(MouseEvent e) {
+    }
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+    @Override
+    public void windowClosing(WindowEvent e) {
+        BookListLogic.saveBooks();
+    }
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
     }
 }

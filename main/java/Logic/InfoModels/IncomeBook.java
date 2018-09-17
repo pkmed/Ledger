@@ -32,6 +32,14 @@ public class IncomeBook {
     public void deleteEntry(int id){
         entries.remove(id);
     }
+    public void deleteEntry(String label, int amount, String date){
+        for(int i=0; i<entries.size();i++){
+            if(entries.get(i).getLabel().equals(label) && entries.get(i).getAmount()==amount && entries.get(i).getDate().equals(date)){
+                entries.remove(i);
+                break;
+            }
+        }
+    }
     public void editEntry(int id, String label, int amount, String date){
         entries.get(id).setLabel(label);
         entries.get(id).setAmount(amount);

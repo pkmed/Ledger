@@ -12,19 +12,19 @@ public class IncomeEntry {
     public String getLabel(){
         return label;
     }
-    void setLabel(String label){
+    public void setLabel(String label){
         this.label = label;
     }
     public int getAmount() {
         return amount;
     }
-    void setAmount(int amount){
+    public void setAmount(int amount){
         this.amount = amount;
     }
     public String getDate() {
         return date;
     }
-    void setDate(String date){
+    public void setDate(String date){
         this.date = date;
     }
 }
