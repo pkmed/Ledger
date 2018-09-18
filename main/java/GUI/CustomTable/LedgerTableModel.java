@@ -1,5 +1,7 @@
 package GUI.CustomTable;
 
+import Logic.InfoModels.IncomeEntry;
+
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.*;
 import java.util.ArrayList;
@@ -30,6 +32,15 @@ public class LedgerTableModel extends AbstractTableModel {
                 i++;
             }
         }
+        data.add(currentRowNumber, singleRow);
+        newRowsAdded(new TableModelEvent(this,currentRowNumber,currentRowNumber,-1,TableModelEvent.INSERT));
+        currentRowNumber++;
+    }
+    public void addRow(IncomeEntry entry){
+        singleRow = new ArrayList<>();
+        setValueAt(entry.getLabel(),currentRowNumber,0);
+        setValueAt(entry.getAmount(),currentRowNumber,1);
+        setValueAt(entry.getDate(),currentRowNumber,2);
         data.add(currentRowNumber, singleRow);
         newRowsAdded(new TableModelEvent(this,currentRowNumber,currentRowNumber,-1,TableModelEvent.INSERT));
         currentRowNumber++;

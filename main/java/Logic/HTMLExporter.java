@@ -1,27 +1,29 @@
 package Logic;
 
+import Logic.InfoModels.IncomeEntry;
+
 import java.io.IOException;
 import java.io.Writer;
 
 class HTMLExporter {
     private String outHTMLCode="";
     private Writer outWriter;
-    private String[] data;
+    private IncomeEntry[] data;
     private String bookName;
     HTMLExporter(Writer outWriter, String bookName){
         this.outWriter = outWriter;
         this.bookName = bookName;
     }
-    void setData(String[] data){
+    void setData(IncomeEntry[] data){
         this.data = data;
     }
     void writeData(){
         String tableData="";
-        for(String s:data){
+        for(IncomeEntry s:data){
             tableData+="<tr>\n" +
-            "               <td style=\"border:1px solid black;\">"+s.split(";")[0]+"</td>\n" +
-            "               <td style=\"border:1px solid black;\">"+s.split(";")[1]+"</td>\n" +
-            "               <td style=\"border:1px solid black;\">"+s.split(";")[2]+"</td>\n" +
+            "               <td style=\"border:1px solid black;\">"+s.getLabel()+"</td>\n" +
+            "               <td style=\"border:1px solid black;\">"+s.getAmount()+"</td>\n" +
+            "               <td style=\"border:1px solid black;\">"+s.getDate()+"</td>\n" +
             "           </tr>\n";
         }
         outHTMLCode+="<!DOCTYPE html>\n" +

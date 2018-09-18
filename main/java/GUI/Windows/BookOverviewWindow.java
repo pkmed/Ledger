@@ -4,6 +4,7 @@ import GUI.Constants.BookOverviewCommands;
 import GUI.Controllers.BookOverviewController;
 import GUI.CustomTable.LedgerCellRenderer;
 import GUI.CustomTable.LedgerTableModel;
+import Logic.InfoModels.IncomeEntry;
 
 import javax.swing.*;
 
@@ -78,6 +79,12 @@ public class BookOverviewWindow extends JFrame {
         ledgerModel.clearValues();
         for(String entry:entries){
             ledgerModel.addRow(entry.split(";"));
+        }
+    }
+    public void refreshEntries(IncomeEntry[] entries){
+        ledgerModel.clearValues();
+        for(IncomeEntry entry:entries){
+            ledgerModel.addRow(entry);
         }
     }
     public String getSelectedEntry(){

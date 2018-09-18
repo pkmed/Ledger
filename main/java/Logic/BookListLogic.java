@@ -63,22 +63,14 @@ public class BookListLogic {
         books.remove(bookName);
         booksListWindow.refreshList(getBooks());
     }
-
     public static void openBook() {
         String bookName = booksListWindow.getSelectedBook();
         booksListWindow.dispose();
         BookOverviewLogic.setOpenedBookName(bookName);
         BookOverviewLogic.showWindow(getBookEntries(bookName));
     }
-
-    static String[] getBookEntries(String bookName){
-        IncomeEntry[] entries = books.get(bookName).getEntries();
-        String[] returnableEntries = new String[entries.length];
-        for(int i=0;i<entries.length; i++){
-            //TODO: adapt view of entries to work with fields instead of strings
-            returnableEntries[i] = entries[i].getLabel()+";"+entries[i].getAmount()+";"+entries[i].getDate();
-        }
-        return returnableEntries;
+    static IncomeEntry[] getBookEntries(String bookName){
+        return books.get(bookName).getEntries();
     }
 
     public static void exportBook(String bookName, String exportType, String saveTo){
@@ -112,13 +104,17 @@ public class BookListLogic {
     private static void exportToXls(String bookName, String saveTo) {
         Workbook book = new HSSFWorkbook();
         Sheet sheet = book.createSheet(bookName);
-        String[] entries = getBookEntries(bookName);
+        IncomeEntry[] entries = getBookEntries(bookName);
         for(int r = 0; r < entries.length+1;r++){
             Row row = sheet.createRow(r);
             for (int c = 0; c < COL_NUMBER; c++) {
                 Cell cell = row.createCell(c);
-                if(r>0) {
-                    cell.setCellValue(entries[r-1].split(";")[c]);
+                if(r>0 && c==0) {
+                    cell.setCellValue(entries[r-1].getLabel());
+                } else if(r>0&&c==1){
+                    cell.setCellValue(entries[r-1].getAmount());
+                } else if(r>0&&c==2){
+                    cell.setCellValue(entries[r-1].getDate());
                 } else {
                     cell.setCellValue(INCOME_BOOK_HEADERS[c]);
                 }
@@ -138,14 +134,18 @@ public class BookListLogic {
     private static void exportToXlsx(String bookName, String saveTo) {
         XSSFWorkbook book = new XSSFWorkbook();
         XSSFSheet sheet = book.createSheet(bookName);
-        String[] entries = getBookEntries(bookName);
+        IncomeEntry[] entries = getBookEntries(bookName);
         for (int r=0;r < entries.length+1; r++ ) {
             XSSFRow row = sheet.createRow(r);
             for (int c = 0; c < COL_NUMBER; c++) {
                 XSSFCell cell = row.createCell(c);
-                if(r>0) {
-                    cell.setCellValue(entries[r-1].split(";")[c]);
-                } else {
+                if(r>0 && c==0) {
+                    cell.setCellValue(entries[r-1].getLabel());
+                } else if(r>0&&c==1){
+                    cell.setCellValue(entries[r-1].getAmount());
+                } else if(r>0&&c==2){
+                    cell.setCellValue(entries[r-1].getDate());
+                }else {
                     cell.setCellValue(INCOME_BOOK_HEADERS[c]);
                 }
                 sheet.autoSizeColumn(c);
@@ -166,9 +166,9 @@ public class BookListLogic {
             FileWriter fWriter = new FileWriter(saveTo+"/"+bookName+".csv", false);
             CSVWriter csvWriter = new CSVWriter(fWriter,';',CSVWriter.NO_QUOTE_CHARACTER,CSVWriter.DEFAULT_ESCAPE_CHARACTER,CSVWriter.DEFAULT_LINE_END);
             csvWriter.writeNext(INCOME_BOOK_HEADERS);
-            String[] entries = getBookEntries(bookName);
-            for(String s : entries)
-                csvWriter.writeNext(s.split(";"));
+            IncomeEntry[] entries = getBookEntries(bookName);
+            for(IncomeEntry s : entries)
+                csvWriter.writeNext(new String[]{s.getLabel(),s.getAmount()+"",s.getDate()});
             csvWriter.close();
             fWriter.close();
         } catch (Exception e) {

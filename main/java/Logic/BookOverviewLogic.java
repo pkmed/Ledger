@@ -1,11 +1,12 @@
 package Logic;
 
 import GUI.Windows.BookOverviewWindow;
+import Logic.InfoModels.IncomeEntry;
 
 public class BookOverviewLogic {
     private static String openedBookName;
     private static BookOverviewWindow bookOverviewWindow;
-    static void showWindow(String[] entries){
+    static void showWindow(IncomeEntry[] entries){
         bookOverviewWindow = new BookOverviewWindow(openedBookName);
         bookOverviewWindow.refreshEntries(entries);
     }
@@ -14,7 +15,7 @@ public class BookOverviewLogic {
         openedBookName = bookName;
     }
 
-    private static String[] getEntries(){
+    private static IncomeEntry[] getEntries(){
         return BookListLogic.getBookEntries(openedBookName);
     }
     public static String getSelectedEntry(){
