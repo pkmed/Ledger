@@ -1,6 +1,6 @@
 package Logic.InfoModels;
 
-public class IncomeEntry {
+public class IncomeEntry implements Entry{
     private String label;
     private int amount;
     private String date;

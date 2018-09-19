@@ -2,49 +2,63 @@ package Logic.InfoModels;
 
 import java.util.ArrayList;
 
-public class IncomeBook implements Book {
+public class DebtBook implements Book {
     private String bookName;
     private String bookType;
-    private ArrayList<IncomeEntry> entries = new ArrayList<>();
+    private ArrayList<DebtEntry> entries = new ArrayList<>();
 
-    public IncomeBook(String bookName){
+    public DebtBook(String bookName){
         setBookName(bookName);
     }
-    public void setBookName(String bookName){
+    @Override
+    public void setBookName(String bookName) {
         this.bookName = bookName;
     }
-    public String getBookName(){
+
+    @Override
+    public String getBookName() {
         return bookName;
     }
+
     @Override
     public void setBookType(String bookType) {
         this.bookType = bookType;
     }
+
     @Override
     public String getBookType() {
         return bookType;
     }
-    public void addEntry(String entryLabel, int amount, String entryDate){
-        IncomeEntry entry = new IncomeEntry(entryLabel,amount,entryDate);
+
+    @Override
+    public void addEntry(String entryLabel, int amount, String entryDate) {
+        DebtEntry entry = new DebtEntry(entryLabel,amount,entryDate);
         entries.add(entry);
     }
-    public IncomeEntry[] getEntries(){
-        return entries.toArray(new IncomeEntry[entries.size()]);
+
+    public DebtEntry[] getEntries() {
+        return entries.toArray(new DebtEntry[entries.size()]);
     }
-    public IncomeEntry[] getEntries(int lowerBound, int upperBound){
-        IncomeEntry[] entries = new IncomeEntry[upperBound-lowerBound];
+
+    public DebtEntry[] getEntries(int lowerBound, int upperBound) {
+        DebtEntry[] entries = new DebtEntry[upperBound-lowerBound];
         for(int i = lowerBound; i<upperBound; i++){
             entries[i] = this.entries.get(i);
         }
         return entries;
     }
-    public IncomeEntry getEntry(int id){
+
+    public DebtEntry getEntry(int id) {
         return entries.get(id);
     }
-    public void deleteEntry(int id){
+
+    @Override
+    public void deleteEntry(int id) {
         entries.remove(id);
     }
-    public void deleteEntry(String label, int amount, String date){
+
+    @Override
+    public void deleteEntry(String label, int amount, String date) {
         for(int i=0; i<entries.size();i++){
             if(entries.get(i).getLabel().equals(label) && entries.get(i).getAmount()==amount && entries.get(i).getDate().equals(date)){
                 entries.remove(i);
@@ -52,7 +66,9 @@ public class IncomeBook implements Book {
             }
         }
     }
-    public void editEntry(int id, String label, int amount, String date){
+
+    @Override
+    public void editEntry(int id, String label, int amount, String date) {
         entries.get(id).setLabel(label);
         entries.get(id).setAmount(amount);
         entries.get(id).setDate(date);

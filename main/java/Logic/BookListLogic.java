@@ -3,8 +3,7 @@ package Logic;
 import GUI.Windows.BooksListWindow;
 import Logic.FileInteraction.DataReader;
 import Logic.FileInteraction.DataWriter;
-import Logic.InfoModels.IncomeBook;
-import Logic.InfoModels.IncomeEntry;
+import Logic.InfoModels.*;
 import com.opencsv.CSVWriter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -19,12 +18,14 @@ import java.util.HashMap;
 public class BookListLogic {
     private static final int COL_NUMBER = 3;
     private static final String[] INCOME_BOOK_HEADERS = {"Entry","Amount","Date"};
-    private static HashMap<String, IncomeBook> books = new HashMap<>();
+    private static HashMap<String, Book> books = new HashMap<>();
     private static String workDir = "D:\\Java\\IdeaProjects\\Desktop\\ledger\\src\\main\\resources\\books\\";
 
     private static BooksListWindow booksListWindow;
     public static void main(String[] args){
         File files = new File(workDir);
+        //call data encoder
+        //TODO: remake DataReader\Writer to working examples
         books = new DataReader().loadBooks(files.getPath(),files.list());
         showWindow();
     }
@@ -34,24 +35,30 @@ public class BookListLogic {
     }
     private static String[] getBooks() {
         String booksNames[] = books.keySet().toArray(new String[books.size()]);
-        //TODO: move book type to object
         for (int i = 0; i < booksNames.length; i++) {
-            booksNames[i] +=";income";
+            booksNames[i] +=";"+books.get(booksNames[i]).getBookType();
         }
         return booksNames;
     }
     public static void saveBooks(){
         new DataWriter().saveBooks(books,workDir);
     }
-    static IncomeBook getBook(String bookName){
-        return books.get(bookName);
+    static Book getBook(String bookName){
+        if(books.get(bookName).getBookType().equals("income"))
+            return (IncomeBook)books.get(bookName);
+        else return (DebtBook)books.get(bookName);
     }
     public static String getSelectedBook(){
         return booksListWindow.getSelectedBook();
     }
-    public static void addBook(String bookName) {
-        IncomeBook book = new IncomeBook();
-        book.setBookName(bookName);
+    public static void addBook(String bookName, String bookType) {
+        Book book;
+        if(bookType.equals("income")){
+            book = new IncomeBook(bookName);
+        } else {
+            book = new DebtBook(bookName);
+        }
+        book.setBookType(bookType);
         books.put(bookName, book);
         saveBooks();
         booksListWindow.refreshList(getBooks());
@@ -67,9 +74,10 @@ public class BookListLogic {
         String bookName = booksListWindow.getSelectedBook();
         booksListWindow.dispose();
         BookOverviewLogic.setOpenedBookName(bookName);
+        BookOverviewLogic.setOpenedBookType(books.get(bookName).getBookType());
         BookOverviewLogic.showWindow(getBookEntries(bookName));
     }
-    static IncomeEntry[] getBookEntries(String bookName){
+    static Entry[] getBookEntries(String bookName){
         return books.get(bookName).getEntries();
     }
 
@@ -104,7 +112,7 @@ public class BookListLogic {
     private static void exportToXls(String bookName, String saveTo) {
         Workbook book = new HSSFWorkbook();
         Sheet sheet = book.createSheet(bookName);
-        IncomeEntry[] entries = getBookEntries(bookName);
+        Entry[] entries = getBookEntries(bookName);
         for(int r = 0; r < entries.length+1;r++){
             Row row = sheet.createRow(r);
             for (int c = 0; c < COL_NUMBER; c++) {
@@ -134,7 +142,7 @@ public class BookListLogic {
     private static void exportToXlsx(String bookName, String saveTo) {
         XSSFWorkbook book = new XSSFWorkbook();
         XSSFSheet sheet = book.createSheet(bookName);
-        IncomeEntry[] entries = getBookEntries(bookName);
+        Entry[] entries = getBookEntries(bookName);
         for (int r=0;r < entries.length+1; r++ ) {
             XSSFRow row = sheet.createRow(r);
             for (int c = 0; c < COL_NUMBER; c++) {
@@ -166,8 +174,8 @@ public class BookListLogic {
             FileWriter fWriter = new FileWriter(saveTo+"/"+bookName+".csv", false);
             CSVWriter csvWriter = new CSVWriter(fWriter,';',CSVWriter.NO_QUOTE_CHARACTER,CSVWriter.DEFAULT_ESCAPE_CHARACTER,CSVWriter.DEFAULT_LINE_END);
             csvWriter.writeNext(INCOME_BOOK_HEADERS);
-            IncomeEntry[] entries = getBookEntries(bookName);
-            for(IncomeEntry s : entries)
+            Entry[] entries = getBookEntries(bookName);
+            for(Entry s : entries)
                 csvWriter.writeNext(new String[]{s.getLabel(),s.getAmount()+"",s.getDate()});
             csvWriter.close();
             fWriter.close();

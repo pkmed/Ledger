@@ -1,6 +1,7 @@
 package GUI.Controllers;
 
 import GUI.Constants.BooksListCommands;
+import GUI.Windows.BookCreationForm;
 import GUI.Windows.ExportForm;
 import Logic.BookListLogic;
 
@@ -9,16 +10,12 @@ import java.awt.event.*;
 
 public class BooksListController implements ActionListener, MouseListener, WindowListener {
     private ExportForm exportForm;
+    private BookCreationForm creationForm;
 
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()){
             case BooksListCommands.BTN_FUNC_ADD_BOOK:
-                String bookName = JOptionPane.showInputDialog("Type book name");
-                if(bookName.equals("")){
-                    JOptionPane.showMessageDialog(null,"Empty name");
-                } else {
-                    BookListLogic.addBook(bookName);
-                }
+                creationForm = new BookCreationForm(this,BooksListCommands.BTN_FUNC_CREATE_BOOK);
                 break;
             case BooksListCommands.BTN_FUNC_DELETE_BOOK:
                 BookListLogic.deleteBook();
@@ -35,6 +32,10 @@ public class BooksListController implements ActionListener, MouseListener, Windo
             case BooksListCommands.BTN_FUNC_EXPORT_FORM_EXPORT:
                 BookListLogic.exportBook(BookListLogic.getSelectedBook(), exportForm.getExportType(), exportForm.getSavePath());
                 exportForm.dispose();
+                break;
+            case BooksListCommands.BTN_FUNC_CREATE_BOOK:
+                BookListLogic.addBook(creationForm.getValues()[0],creationForm.getValues()[1]);
+                creationForm.dispose();
                 break;
         }
     }

@@ -7,4 +7,5 @@ public final class BooksListCommands {
     public static final String BTN_FUNC_OPEN_BOOK = "Open book";
     public static final String BTN_FUNC_EXPORT_FORM_EXPORT = "Export";
     public static final String BTN_FUNC_EXPORT_FORM_DIR_CHOOSE = "Choose";
+    public static final String BTN_FUNC_CREATE_BOOK = "Create book";
 }

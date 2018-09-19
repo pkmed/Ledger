@@ -4,7 +4,6 @@ import GUI.Constants.BooksListCommands;
 import GUI.Controllers.BooksListController;
 import GUI.CustomTable.LedgerCellRenderer;
 import GUI.CustomTable.LedgerTableModel;
-import Logic.InfoModels.IncomeEntry;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,12 +75,6 @@ public class BooksListWindow extends JFrame {
         tableModel.clearValues();
         for(String book:books){
             tableModel.addRow(book.split(";"));
-        }
-    }
-    public void refreshList(IncomeEntry[] entries){
-        tableModel.clearValues();
-        for(IncomeEntry entry:entries){
-            tableModel.addRow(entry);
         }
     }
     public String getSelectedBook(){

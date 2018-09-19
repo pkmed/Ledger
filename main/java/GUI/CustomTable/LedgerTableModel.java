@@ -1,5 +1,8 @@
 package GUI.CustomTable;
 
+import Logic.InfoModels.DebtBook;
+import Logic.InfoModels.DebtEntry;
+import Logic.InfoModels.Entry;
 import Logic.InfoModels.IncomeEntry;
 
 import javax.swing.event.TableModelEvent;
@@ -36,22 +39,23 @@ public class LedgerTableModel extends AbstractTableModel {
         newRowsAdded(new TableModelEvent(this,currentRowNumber,currentRowNumber,-1,TableModelEvent.INSERT));
         currentRowNumber++;
     }
-    public void addRow(IncomeEntry entry){
+    public void addRow(Entry entry){
         singleRow = new ArrayList<>();
-        setValueAt(entry.getLabel(),currentRowNumber,0);
-        setValueAt(entry.getAmount(),currentRowNumber,1);
-        setValueAt(entry.getDate(),currentRowNumber,2);
+        //TODO: add switch on book type for entries
+        if(entry instanceof IncomeEntry) {
+            setValueAt(entry.getLabel(), currentRowNumber, 0);
+            setValueAt(entry.getAmount(), currentRowNumber, 1);
+            setValueAt(entry.getDate(), currentRowNumber, 2);
+        } else if(entry instanceof DebtEntry){
+            setValueAt(entry.getLabel(),currentRowNumber,0);
+            setValueAt(entry.getAmount(),currentRowNumber,1);
+            setValueAt(entry.getDate(),currentRowNumber,2);
+            setValueAt(((DebtEntry)entry).isRepaid(),currentRowNumber,3);
+        }
         data.add(currentRowNumber, singleRow);
         newRowsAdded(new TableModelEvent(this,currentRowNumber,currentRowNumber,-1,TableModelEvent.INSERT));
         currentRowNumber++;
     }
-    /*public void addColumn(String colName){
-        columnModel.addColumn(new TableColumn(colCount));
-        columnModel.getColumn(colCount).setHeaderValue(colName);
-        columnModel.getColumn(colCount).addPropertyChangeListener(new TableColumnPropertyChangeHandler());
-        fireTableChanged(new TableModelEvent(this,0,currentRowNumber,colCount,TableModelEvent.UPDATE));
-        colCount++;
-    }*/
     private void newRowsAdded(TableModelEvent event){
         fireTableChanged(event);
     }

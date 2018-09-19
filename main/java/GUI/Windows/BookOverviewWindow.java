@@ -4,15 +4,15 @@ import GUI.Constants.BookOverviewCommands;
 import GUI.Controllers.BookOverviewController;
 import GUI.CustomTable.LedgerCellRenderer;
 import GUI.CustomTable.LedgerTableModel;
-import Logic.InfoModels.IncomeEntry;
+import Logic.InfoModels.Entry;
 
 import javax.swing.*;
 
 import java.awt.*;
 
 public class BookOverviewWindow extends JFrame {
-    private LedgerTableModel ledgerModel = new LedgerTableModel(new String[]{"Entry","Amount","Date"});
-    private JTable entriesTable = new JTable(ledgerModel);
+    private LedgerTableModel ledgerModel;
+    private JTable entriesTable;
 
     private JButton addEntry = new JButton(BookOverviewCommands.BTN_FUNC_ADD_ENTRY),
             removeEntry = new JButton(BookOverviewCommands.BTN_FUNC_REMOVE_ENTRY),
@@ -20,10 +20,19 @@ public class BookOverviewWindow extends JFrame {
             backToList = new JButton(BookOverviewCommands.BTN_FUNC_BACK_TO_LIST);
     private BookOverviewController controller = new BookOverviewController();
 
-    public BookOverviewWindow(String openedBookName){
-        entriesTable.getColumnModel().getColumn(0).setCellRenderer(new LedgerCellRenderer());
-        entriesTable.getColumnModel().getColumn(1).setCellRenderer(new LedgerCellRenderer());
-        entriesTable.getColumnModel().getColumn(2).setCellRenderer(new LedgerCellRenderer());
+    public BookOverviewWindow(String openedBookName, String bookType){
+        switch(bookType){
+            case "income":
+                ledgerModel = new LedgerTableModel(new String[]{"Entry","Amount","Date"});
+                break;
+            case "debt":
+                ledgerModel = new LedgerTableModel(new String[]{"Entry","Debt Amount","Date", "Status"});
+                break;
+        }
+        entriesTable = new JTable(ledgerModel);
+        for(int i=0; i<entriesTable.getColumnModel().getColumnCount(); i++){
+            entriesTable.getColumnModel().getColumn(i).setCellRenderer(new LedgerCellRenderer());
+        }
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100,100,500,600);
         GridBagLayout gbLay = new GridBagLayout();
@@ -81,9 +90,9 @@ public class BookOverviewWindow extends JFrame {
             ledgerModel.addRow(entry.split(";"));
         }
     }
-    public void refreshEntries(IncomeEntry[] entries){
+    public void refreshEntries(Entry[] entries){
         ledgerModel.clearValues();
-        for(IncomeEntry entry:entries){
+        for(Entry entry:entries){
             ledgerModel.addRow(entry);
         }
     }

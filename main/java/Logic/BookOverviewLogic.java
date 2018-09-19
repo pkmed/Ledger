@@ -1,21 +1,27 @@
 package Logic;
 
 import GUI.Windows.BookOverviewWindow;
-import Logic.InfoModels.IncomeEntry;
+import Logic.InfoModels.DebtBook;
+import Logic.InfoModels.Entry;
+import Logic.InfoModels.IncomeBook;
 
 public class BookOverviewLogic {
     private static String openedBookName;
+    private static String openedBookType;
     private static BookOverviewWindow bookOverviewWindow;
-    static void showWindow(IncomeEntry[] entries){
-        bookOverviewWindow = new BookOverviewWindow(openedBookName);
+    static void showWindow(Entry[] entries){
+        bookOverviewWindow = new BookOverviewWindow(openedBookName,openedBookType);
         bookOverviewWindow.refreshEntries(entries);
     }
 
     static void setOpenedBookName(String bookName) {
         openedBookName = bookName;
     }
+    static void setOpenedBookType(String bookType) {
+        openedBookType = bookType;
+    }
 
-    private static IncomeEntry[] getEntries(){
+    private static Entry[] getEntries(){
         return BookListLogic.getBookEntries(openedBookName);
     }
     public static String getSelectedEntry(){
@@ -23,7 +29,11 @@ public class BookOverviewLogic {
     }
 
     public static void addEntry(String[] values) {
-        BookListLogic.getBook(openedBookName).addEntry(values[0],Integer.parseInt(values[1]),values[2]);
+        if(openedBookType.equals("income")) {
+            ((IncomeBook)BookListLogic.getBook(openedBookName)).addEntry(values[0], Integer.parseInt(values[1]), values[2]);
+        } else if(openedBookType.equals("debt")){
+            ((DebtBook)BookListLogic.getBook(openedBookName)).addEntry(values[0], Integer.parseInt(values[1]), values[2]);
+        }
         bookOverviewWindow.refreshEntries(getEntries());
     }
 
