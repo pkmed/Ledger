@@ -17,8 +17,7 @@ public class DebtEntry implements Entry {
     public String getLabel(){
         return label;
     }
-    //TODO: add editing for debt entries
-    public void setStatus(boolean isRepaid){
+    void setStatus(boolean isRepaid){
         repaid = isRepaid;
     }
 

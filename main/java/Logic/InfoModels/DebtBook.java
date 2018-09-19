@@ -73,4 +73,8 @@ public class DebtBook implements Book {
         entries.get(id).setAmount(amount);
         entries.get(id).setDate(date);
     }
+    public void editEntry(int id, String label, int amount, String date, String status){
+        editEntry(id,label,amount,date);
+        entries.get(id).setStatus(Boolean.parseBoolean(status));
+    }
 }

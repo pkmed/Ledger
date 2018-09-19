@@ -8,6 +8,7 @@ import java.awt.*;
 public class BookCreationForm extends JFrame {
     private JLabel bookNameLabel = new JLabel("Book name:");
     private JTextField bookNameField = new JTextField();
+    private ButtonGroup btnGr = new ButtonGroup();
     private JRadioButton incomeTypeBtn = new JRadioButton("Income book"), debtTypeBtn = new JRadioButton("Debt book");
     private JButton createBookBtn;
 
@@ -19,6 +20,8 @@ public class BookCreationForm extends JFrame {
         setLayout(gbLay);
         createBookBtn = new JButton(btnFunc);
         createBookBtn.addActionListener(booksListController);
+        btnGr.add(incomeTypeBtn);
+        btnGr.add(debtTypeBtn);
 
         gbConstr.insets.set(4,4,4,4);
 

@@ -13,21 +13,27 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 public class BookListLogic {
-    private static final int COL_NUMBER = 3;
+    private static final int INCOME_COL_NUMBER = 3;
+    private static final int DEBT_COL_NUMBER = 4;
     private static final String[] INCOME_BOOK_HEADERS = {"Entry","Amount","Date"};
+    private static final String[] DEBT_BOOK_HEADERS = {"Entry","Amount","Date","Status"};
     private static HashMap<String, Book> books = new HashMap<>();
-    private static String workDir = "D:\\Java\\IdeaProjects\\Desktop\\ledger\\src\\main\\resources\\books\\";
+    private static String workDir;
 
     private static BooksListWindow booksListWindow;
     public static void main(String[] args){
-        File files = new File(workDir);
-        //call data encoder
-        //TODO: remake DataReader\Writer to working examples
-        books = new DataReader().loadBooks(files.getPath(),files.list());
-        showWindow();
+        File files;
+        try {
+            files = new File(Paths.get(BookListLogic.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()+"/books");
+            workDir = files.getPath();
+            books = new DataReader().loadBooks(files.getPath(),files.list());
+            showWindow();
+        } catch (URISyntaxException e) { e.printStackTrace(); }
     }
     static void showWindow(){
         booksListWindow = new BooksListWindow();
@@ -44,9 +50,7 @@ public class BookListLogic {
         new DataWriter().saveBooks(books,workDir);
     }
     static Book getBook(String bookName){
-        if(books.get(bookName).getBookType().equals("income"))
-            return (IncomeBook)books.get(bookName);
-        else return (DebtBook)books.get(bookName);
+        return books.get(bookName);
     }
     public static String getSelectedBook(){
         return booksListWindow.getSelectedBook();
@@ -65,10 +69,16 @@ public class BookListLogic {
     }
     public static void deleteBook(){
         String bookName = booksListWindow.getSelectedBook().split(";")[0];
-        File del = new File(workDir + bookName + ".json");
+        File del = new File(workDir +"/"+ bookName + ".json");
+        del.setWritable(true);
         del.delete();
         books.remove(bookName);
         booksListWindow.refreshList(getBooks());
+        booksListWindow.validate();
+        booksListWindow.invalidate();
+        booksListWindow.revalidate();
+        booksListWindow.repaint();
+        booksListWindow.update(booksListWindow.getGraphics());
     }
     public static void openBook() {
         String bookName = booksListWindow.getSelectedBook();
@@ -113,20 +123,38 @@ public class BookListLogic {
         Workbook book = new HSSFWorkbook();
         Sheet sheet = book.createSheet(bookName);
         Entry[] entries = getBookEntries(bookName);
-        for(int r = 0; r < entries.length+1;r++){
+        for(int r = 0; r < entries.length+1;r++) {
             Row row = sheet.createRow(r);
-            for (int c = 0; c < COL_NUMBER; c++) {
-                Cell cell = row.createCell(c);
-                if(r>0 && c==0) {
-                    cell.setCellValue(entries[r-1].getLabel());
-                } else if(r>0&&c==1){
-                    cell.setCellValue(entries[r-1].getAmount());
-                } else if(r>0&&c==2){
-                    cell.setCellValue(entries[r-1].getDate());
-                } else {
-                    cell.setCellValue(INCOME_BOOK_HEADERS[c]);
+            if(getBook(bookName).getBookType().equals("income")) {
+                for (int c = 0; c < INCOME_COL_NUMBER; c++) {
+                    Cell cell = row.createCell(c);
+                    if (r > 0 && c == 0) {
+                        cell.setCellValue(entries[r - 1].getLabel());
+                    } else if (r > 0 && c == 1) {
+                        cell.setCellValue(entries[r - 1].getAmount());
+                    } else if (r > 0 && c == 2) {
+                        cell.setCellValue(entries[r - 1].getDate());
+                    } else {
+                        cell.setCellValue(INCOME_BOOK_HEADERS[c]);
+                    }
+                    sheet.autoSizeColumn(c);
                 }
-                sheet.autoSizeColumn(c);
+            } else {
+                for (int c = 0; c < DEBT_COL_NUMBER; c++) {
+                    Cell cell = row.createCell(c);
+                    if (r > 0 && c == 0) {
+                        cell.setCellValue(entries[r - 1].getLabel());
+                    } else if (r > 0 && c == 1) {
+                        cell.setCellValue(entries[r - 1].getAmount());
+                    } else if (r > 0 && c == 2) {
+                        cell.setCellValue(entries[r - 1].getDate());
+                    } else if (r > 0 && c == 3) {
+                        cell.setCellValue(((DebtEntry)entries[r - 1]).isRepaid());
+                    } else {
+                        cell.setCellValue(DEBT_BOOK_HEADERS[c]);
+                    }
+                    sheet.autoSizeColumn(c);
+                }
             }
         }
         try {
@@ -145,18 +173,36 @@ public class BookListLogic {
         Entry[] entries = getBookEntries(bookName);
         for (int r=0;r < entries.length+1; r++ ) {
             XSSFRow row = sheet.createRow(r);
-            for (int c = 0; c < COL_NUMBER; c++) {
-                XSSFCell cell = row.createCell(c);
-                if(r>0 && c==0) {
-                    cell.setCellValue(entries[r-1].getLabel());
-                } else if(r>0&&c==1){
-                    cell.setCellValue(entries[r-1].getAmount());
-                } else if(r>0&&c==2){
-                    cell.setCellValue(entries[r-1].getDate());
-                }else {
-                    cell.setCellValue(INCOME_BOOK_HEADERS[c]);
+            if(getBook(bookName).getBookType().equals("income")) {
+                for (int c = 0; c < INCOME_COL_NUMBER; c++) {
+                    XSSFCell cell = row.createCell(c);
+                    if (r > 0 && c == 0) {
+                        cell.setCellValue(entries[r - 1].getLabel());
+                    } else if (r > 0 && c == 1) {
+                        cell.setCellValue(entries[r - 1].getAmount());
+                    } else if (r > 0 && c == 2) {
+                        cell.setCellValue(entries[r - 1].getDate());
+                    } else {
+                        cell.setCellValue(INCOME_BOOK_HEADERS[c]);
+                    }
+                    sheet.autoSizeColumn(c);
                 }
-                sheet.autoSizeColumn(c);
+            } else {
+                for (int c = 0; c < DEBT_COL_NUMBER; c++) {
+                    Cell cell = row.createCell(c);
+                    if (r > 0 && c == 0) {
+                        cell.setCellValue(entries[r - 1].getLabel());
+                    } else if (r > 0 && c == 1) {
+                        cell.setCellValue(entries[r - 1].getAmount());
+                    } else if (r > 0 && c == 2) {
+                        cell.setCellValue(entries[r - 1].getDate());
+                    } else if (r > 0 && c == 3) {
+                        cell.setCellValue(((DebtEntry)entries[r - 1]).isRepaid());
+                    } else {
+                        cell.setCellValue(DEBT_BOOK_HEADERS[c]);
+                    }
+                    sheet.autoSizeColumn(c);
+                }
             }
         }
         try {
@@ -173,10 +219,16 @@ public class BookListLogic {
         try {
             FileWriter fWriter = new FileWriter(saveTo+"/"+bookName+".csv", false);
             CSVWriter csvWriter = new CSVWriter(fWriter,';',CSVWriter.NO_QUOTE_CHARACTER,CSVWriter.DEFAULT_ESCAPE_CHARACTER,CSVWriter.DEFAULT_LINE_END);
-            csvWriter.writeNext(INCOME_BOOK_HEADERS);
             Entry[] entries = getBookEntries(bookName);
-            for(Entry s : entries)
-                csvWriter.writeNext(new String[]{s.getLabel(),s.getAmount()+"",s.getDate()});
+            if(getBook(bookName).getBookType().equals("income")) {
+                csvWriter.writeNext(INCOME_BOOK_HEADERS);
+                for(Entry s : entries)
+                    csvWriter.writeNext(new String[]{s.getLabel(),s.getAmount()+"",s.getDate()});
+            } else {
+                csvWriter.writeNext(DEBT_BOOK_HEADERS);
+                for(Entry s : entries)
+                    csvWriter.writeNext(new String[]{s.getLabel(),s.getAmount()+"",s.getDate(),((DebtEntry)s).isRepaid()});
+            }
             csvWriter.close();
             fWriter.close();
         } catch (Exception e) {

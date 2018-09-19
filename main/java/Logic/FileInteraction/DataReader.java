@@ -2,7 +2,6 @@ package Logic.FileInteraction;
 
 import Logic.InfoModels.Book;
 import Logic.InfoModels.DebtBook;
-import Logic.InfoModels.DebtEntry;
 import Logic.InfoModels.IncomeBook;
 import com.google.gson.Gson;
 
@@ -14,20 +13,22 @@ public class DataReader {
         HashMap<String, Book> books = new HashMap<>();
         Gson loader;
         try{
-            for(String file:files){
-                if(file.contains(".json")) {
-                    loader = new Gson();
-                    FileReader fr = new FileReader(dir + "\\" + file);
-                    //TODO: separate book creation depend on bookType
-                    Book book;
-                    if(bookType(dir + "\\" + file).equals("income")){
-                        book = loader.fromJson(fr, IncomeBook.class);
-                        books.put(book.getBookName(), book);
-                    } else if(bookType(dir + "\\" + file).equals("debt")){
-                        book = loader.fromJson(fr, DebtBook.class);
-                        books.put(book.getBookName(), book);
+            if(files!=null)  {
+                for (String file : files) {
+                    if (file.contains(".json")) {
+                        loader = new Gson();
+                        FileReader fr = new FileReader(dir + "\\" + file);
+                        System.out.println(dir + "\\" + file);
+                        Book book;
+                        if (bookType(dir + "\\" + file).equals("income")) {
+                            book = loader.fromJson(fr, IncomeBook.class);
+                            books.put(book.getBookName(), book);
+                        } else if (bookType(dir + "\\" + file).equals("debt")) {
+                            book = loader.fromJson(fr, DebtBook.class);
+                            books.put(book.getBookName(), book);
+                        }
+                        fr.close();
                     }
-                    fr.close();
                 }
             }
             return books;

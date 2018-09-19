@@ -3,7 +3,6 @@ package Logic;
 import GUI.Windows.BookOverviewWindow;
 import Logic.InfoModels.DebtBook;
 import Logic.InfoModels.Entry;
-import Logic.InfoModels.IncomeBook;
 
 public class BookOverviewLogic {
     private static String openedBookName;
@@ -24,16 +23,15 @@ public class BookOverviewLogic {
     private static Entry[] getEntries(){
         return BookListLogic.getBookEntries(openedBookName);
     }
+    public static String getOpenedBookType(){
+        return openedBookType;
+    }
     public static String getSelectedEntry(){
         return bookOverviewWindow.getSelectedEntry();
     }
 
     public static void addEntry(String[] values) {
-        if(openedBookType.equals("income")) {
-            ((IncomeBook)BookListLogic.getBook(openedBookName)).addEntry(values[0], Integer.parseInt(values[1]), values[2]);
-        } else if(openedBookType.equals("debt")){
-            ((DebtBook)BookListLogic.getBook(openedBookName)).addEntry(values[0], Integer.parseInt(values[1]), values[2]);
-        }
+        BookListLogic.getBook(openedBookName).addEntry(values[0], Integer.parseInt(values[1]), values[2]);
         bookOverviewWindow.refreshEntries(getEntries());
     }
 
@@ -47,6 +45,11 @@ public class BookOverviewLogic {
         int editedAmount = Integer.parseInt(values[1]);
         String selectedEntryData = bookOverviewWindow.getSelectedEntry().split(";")[2];
         BookListLogic.getBook(openedBookName).editEntry(bookOverviewWindow.getSelectedEntryId(),editedEntry,editedAmount,selectedEntryData);
+        String status;
+        if(values.length==4){
+            status = values[3];
+            ((DebtBook)BookListLogic.getBook(openedBookName)).editEntry(bookOverviewWindow.getSelectedEntryId(),editedEntry,editedAmount,selectedEntryData,status);
+        }
         bookOverviewWindow.refreshEntries(getEntries());
     }
 

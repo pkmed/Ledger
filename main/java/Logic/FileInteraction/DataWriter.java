@@ -13,7 +13,10 @@ public class DataWriter {
         for(Book book:books.values()) {
             String outJson = gsonBuilder.toJson(book);
             try {
-                File dir = new File( outDir+ "\\"+book.getBookName()+".json");
+                File dir = new File( outDir+"\\");
+                dir.mkdir();
+                dir = new File(outDir+"\\"+book.getBookName()+".json");
+                dir.setWritable(true);
                 dir.createNewFile();
                 FileWriter fileOut = new FileWriter(outDir + "\\"+book.getBookName()+".json",false);
                 fileOut.write(outJson);

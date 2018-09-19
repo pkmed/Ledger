@@ -1,6 +1,5 @@
 package GUI.CustomTable;
 
-import Logic.InfoModels.DebtBook;
 import Logic.InfoModels.DebtEntry;
 import Logic.InfoModels.Entry;
 import Logic.InfoModels.IncomeEntry;
@@ -41,7 +40,6 @@ public class LedgerTableModel extends AbstractTableModel {
     }
     public void addRow(Entry entry){
         singleRow = new ArrayList<>();
-        //TODO: add switch on book type for entries
         if(entry instanceof IncomeEntry) {
             setValueAt(entry.getLabel(), currentRowNumber, 0);
             setValueAt(entry.getAmount(), currentRowNumber, 1);

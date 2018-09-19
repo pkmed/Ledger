@@ -73,9 +73,12 @@ public class BooksListWindow extends JFrame {
 
     public void refreshList(String[] books) {
         tableModel.clearValues();
-        for(String book:books){
-            tableModel.addRow(book.split(";"));
+        if(books.length>0) {
+            for (String book : books) {
+                tableModel.addRow(book.split(";"));
+            }
         }
+        repaint();
     }
     public String getSelectedBook(){
         return tableModel.getValueAt(booksTable.getSelectedRow(), 0).toString();

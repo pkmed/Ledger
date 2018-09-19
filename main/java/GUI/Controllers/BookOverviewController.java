@@ -16,13 +16,13 @@ public class BookOverviewController implements ActionListener, MouseListener,Win
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()){
             case BookOverviewCommands.BTN_FUNC_ADD_ENTRY:
-                entryForm = new EntryCreateForm(this, BookOverviewCommands.BTN_FUNC_CREATE_ENTRY);
+                entryForm = new EntryCreateForm(this, BookOverviewCommands.BTN_FUNC_CREATE_ENTRY, BookOverviewLogic.getOpenedBookType());
                 break;
             case BookOverviewCommands.BTN_FUNC_REMOVE_ENTRY:
                 BookOverviewLogic.removeEntry();
                 break;
             case BookOverviewCommands.BTN_FUNC_EDIT_ENTRY:
-                entryForm = new EntryCreateForm(this, BookOverviewCommands.BTN_FUNC_EDIT_ENTRY_FORM);
+                entryForm = new EntryCreateForm(this, BookOverviewCommands.BTN_FUNC_EDIT_ENTRY_FORM, BookOverviewLogic.getOpenedBookType());
                 entryForm.setEntry(BookOverviewLogic.getSelectedEntry().split(";")[0]);
                 entryForm.setAmount(BookOverviewLogic.getSelectedEntry().split(";")[1]);
                 break;
@@ -36,6 +36,10 @@ public class BookOverviewController implements ActionListener, MouseListener,Win
                 break;
             case BookOverviewCommands.BTN_FUNC_BACK_TO_LIST:
                 BookOverviewLogic.backToList();
+                break;
+            case "Repaid":
+                break;
+            case "Not repaid":
                 break;
         }
     }
